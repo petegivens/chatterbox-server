@@ -16,7 +16,7 @@ describe('server', function() {
     });
   });
 
-  it('should send back an object', function(done) {
+  xit('should send back an object', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       var parsedBody = JSON.parse(body);
       expect(parsedBody).to.be.an('object');
@@ -24,7 +24,7 @@ describe('server', function() {
     });
   });
 
-  it('should send an object containing a `results` array', function(done) {
+  xit('should send an object containing a `results` array', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       var parsedBody = JSON.parse(body);
       expect(parsedBody).to.be.an('object');
@@ -33,7 +33,7 @@ describe('server', function() {
     });
   });
 
-  it('should accept POST requests to /classes/messages', function(done) {
+  xit('should accept POST requests to /classes/messages', function(done) {
     var requestParams = {method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
@@ -47,7 +47,7 @@ describe('server', function() {
     });
   });
 
-  it('should respond with messages that were previously posted', function(done) {
+  xit('should respond with messages that were previously posted', function(done) {
     var requestParams = {method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
@@ -66,7 +66,7 @@ describe('server', function() {
     });
   });
 
-  it('Should 404 when asked for a nonexistent endpoint', function(done) {
+  xit('Should 404 when asked for a nonexistent endpoint', function(done) {
     request('http://127.0.0.1:3000/arglebargle', function(error, response, body) {
       expect(response.statusCode).to.equal(404);
       done();
