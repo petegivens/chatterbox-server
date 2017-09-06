@@ -22,7 +22,7 @@
 
 app = {
 
-  server: 'http://parse.CAMPUS.hackreactor.com/chatterbox/classes/messages',
+  server: 'http://127.0.0.1:3000/classes/messages',
 
   init: function() {
     // Get username
@@ -43,7 +43,8 @@ app = {
     e.preventDefault();
 
     var message = {
-      username: app.username,
+      // username: app.username,
+      username: 'kenny',
       text: app.$text.val()
     };
 
@@ -96,6 +97,7 @@ app = {
       contentType: 'application/json',
       success: function(json) {
         message.objectId = json.objectId;
+        console.log("POST SUCCESS: ", message)
         app.displayMessage(message);
       },
       complete: function() {

@@ -47,7 +47,17 @@ var requestHandler = function(request, response) {
     statusCode = 201;
     // console.log('request.headers: ', request.headers);
     request.on('data', function(data) {
-      messages.results.push(JSON.parse(data));
+      // console.log('parsed data: ', JSON.parse(data));
+      // console.log('parsed then stringified: ', JSON.stringify(JSON.parse(data)))
+      // console.log('toString data: ', data.toString());
+      // console.log('toString then stringified: ', JSON.stringify(data.toString()))
+      console.log('RAW DATA: ', data);
+      console.log('DATA toString:', data.toString());
+      console.log('DATA toString then parse: ', JSON.parse(data.toString()))
+      console.log('WHAT KIND OF DATA?: ', typeof data);
+
+      data = data.toString();
+      messages.results.push(data);
     });
   }
   // See the note below about CORS headers.
@@ -57,7 +67,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -72,6 +82,7 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
 
   // response.end('{"results": []}');
+  console.log("SERVER SIDE: ", messages)
   response.end(JSON.stringify(messages));
 };
 
