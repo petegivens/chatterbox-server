@@ -51,12 +51,14 @@ var requestHandler = function(request, response) {
       // console.log('parsed then stringified: ', JSON.stringify(JSON.parse(data)))
       // console.log('toString data: ', data.toString());
       // console.log('toString then stringified: ', JSON.stringify(data.toString()))
-      console.log('RAW DATA: ', data);
-      console.log('DATA toString:', data.toString());
-      console.log('DATA toString then parse: ', JSON.parse(data.toString()))
-      console.log('WHAT KIND OF DATA?: ', typeof data);
-
-      data = data.toString();
+      // console.log('RAW DATA: ', data);
+      // console.log('DATA toString:', data.toString());
+      // console.log('DATA toString then parse: ', JSON.parse(data.toString()))
+      // console.log('WHAT KIND OF DATA?: ', typeof data);
+      var rawData = data.toString().split('&')
+      data = {};
+      data[rawData[0].split('=')[0]] = rawData[0].split('=')[1]
+      data[rawData[1].split('=')[0]] = rawData[1].split('=')[1]
       messages.results.push(data);
     });
   }
