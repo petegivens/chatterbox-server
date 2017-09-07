@@ -41,40 +41,56 @@ var requestHandler = function(request, response) {
   // The outgoing status.
   var statusCode = 200;
 
+  var objectId = 0;
+
+  // See the note below about CORS headers.
+  var headers = defaultCorsHeaders;
+
   if (request.url !== '/classes/messages' && request.url !== '/classes/room') {
     statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end('404: Not Found');
+
   } else if (request.method === 'POST') {
+    headers['Content-Type'] = 'application/json';
     statusCode = 201;
-    // console.log('request.headers: ', request.headers);
+
     request.on('data', function(data) {
-      // console.log('parsed data: ', JSON.parse(data));
-      // console.log('parsed then stringified: ', JSON.stringify(JSON.parse(data)))
-      // console.log('toString data: ', data.toString());
-      // console.log('toString then stringified: ', JSON.stringify(data.toString()))
-      // console.log('RAW DATA: ', data);
-      // console.log('DATA toString:', data.toString());
-      // console.log('DATA toString then parse: ', JSON.parse(data.toString()))
-      // console.log('WHAT KIND OF DATA?: ', typeof data);
       var rawData = data.toString().split('&')
       data = {};
       data[rawData[0].split('=')[0]] = rawData[0].split('=')[1]
       data[rawData[1].split('=')[0]] = rawData[1].split('=')[1]
       messages.results.push(data);
+
+      objectId++;
     });
+
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify({ objectId: objectId }));
+
+  } else if (request.method === 'OPTIONS'){
+    headers['Content-Type'] = 'plain/text';
+    response.writeHead(statusCode, headers);
+    response.end( headers['access-control-allow-methods'] );
+
+  } else {
+    headers['Content-Type'] = 'application/json';
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify(messages));
   }
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+
+
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'application/json';
+
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-  // response.write(JSON.parse(request.body));
+
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -83,9 +99,8 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-  // response.end('{"results": []}');
   console.log("SERVER SIDE: ", messages)
-  response.end(JSON.stringify(messages));
+
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
