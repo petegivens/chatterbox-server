@@ -32,7 +32,7 @@ var app = {
     // Poll for new messages
     setInterval(function() {
       app.fetch(true);
-    }, 30000);
+    }, 3000);
   },
 
   send: function(message) {
