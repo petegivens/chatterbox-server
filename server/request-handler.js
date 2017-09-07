@@ -1,3 +1,5 @@
+var url = require('url');
+var qs = require('querystring');
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -19,7 +21,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var messages = {results: []};
+var messages = {results: [{username: "Hackerman", text: "I\'m so kool", roomname: "lobby", objectId: 1}]};
+var objectId = 2;
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -36,17 +39,20 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
   var statusCode = 200;
 
-  var objectId = 0;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
+  var endPoint = url.parse(request.url).pathname;
+  console.log('Serving request type ' + request.method + ' for url ' + endPoint);
 
-  if (request.url !== '/classes/messages' && request.url !== '/classes/room') {
+  if (endPoint !== '/classes/messages' && endPoint !== '/classes/room') {
+    // console.log('the good one: ', url.parse(request.url).pathname)
+    // console.log('url without url module: ', request.url);
+    // console.log(qs.parse(url.parse(request.url).query))
     statusCode = 404;
     response.writeHead(statusCode, headers);
     response.end('404: Not Found');
@@ -56,19 +62,21 @@ var requestHandler = function(request, response) {
     statusCode = 201;
 
     request.on('data', function(data) {
-      var rawData = data.toString().split('&')
-      data = {};
-      data[rawData[0].split('=')[0]] = rawData[0].split('=')[1]
-      data[rawData[1].split('=')[0]] = rawData[1].split('=')[1]
-      messages.results.push(data);
-
+      data = qs.parse(data.toString());
+      // var rawData = data.toString().split('&')
+      // data = {};
+      // data[rawData[0].split('=')[0]] = rawData[0].split('=')[1]
+      // data[rawData[1].split('=')[0]] = rawData[1].split('=')[1]
+      data.objectId = objectId;
+      console.log('**************currenct objectId: ', objectId);
       objectId++;
+      console.log('incremented objectId: ', objectId);
+      messages.results.push(data);
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify(data));
     });
 
-    response.writeHead(statusCode, headers);
-    response.end(JSON.stringify({ objectId: objectId }));
-
-  } else if (request.method === 'OPTIONS'){
+  } else if (request.method === 'OPTIONS') {
     headers['Content-Type'] = 'plain/text';
     response.writeHead(statusCode, headers);
     response.end( headers['access-control-allow-methods'] );
@@ -76,6 +84,7 @@ var requestHandler = function(request, response) {
   } else {
     headers['Content-Type'] = 'application/json';
     response.writeHead(statusCode, headers);
+    console.log("SERVER SIDE MESSAGE THROW: ", JSON.stringify(messages));
     response.end(JSON.stringify(messages));
   }
 
@@ -98,9 +107,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-
-  console.log("SERVER SIDE: ", messages)
-
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

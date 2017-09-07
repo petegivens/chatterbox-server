@@ -32,7 +32,7 @@ var app = {
     // Poll for new messages
     setInterval(function() {
       app.fetch(true);
-    }, 3000);
+    }, 30000);
   },
 
   send: function(message) {
@@ -51,7 +51,6 @@ var app = {
         app.fetch();
       },
       error: function (error) {
-        console.error('chatterbox: Failed to send message', error);
       }
     });
   },
@@ -76,7 +75,6 @@ var app = {
         if (mostRecentMessage.objectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
           app.renderRoomList(data.results);
-
           // Update the UI with the fetched messages
           app.renderMessages(data.results, animate);
 
